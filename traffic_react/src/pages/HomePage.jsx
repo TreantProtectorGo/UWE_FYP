@@ -146,7 +146,22 @@ const HomePage = () => {
     e.preventDefault();
     
     if (!origin.trim() || !destination.trim()) {
+      alert(i18n.language === 'zh' ? '請輸入起點和終點' : 'Please enter origin and destination');
       return;
+    }
+
+    setLoadingRoute(true);
+    setErrorRoute(null);
+    setResult(null);
+
+    try {
+      const response = await aiAPI.checkRoute(origin, destination);
+      setResult(response);
+    } catch (err) {
+      console.error('AI Route Check Error:', err);
+      setErrorRoute(err.message || (i18n.language === 'zh' ? '檢查失敗，請稍後再試' : 'Check failed, please try again'));
+    } finally {
+      setLoadingRoute(false);
     }
   };
 
@@ -307,13 +322,87 @@ const HomePage = () => {
               disabled={loadingRoute}
               className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-black hover:to-gray-900 text-white font-semibold py-3 rounded-xl shadow-lg shadow-gray-400/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              {t('aiCheck.findRoute')}
+              {loadingRoute ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  {i18n.language === 'zh' ? '分析中...' : 'Analyzing...'}
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  {t('aiCheck.findRoute')}
+                </>
+              )}
             </button>
 
           </form>
+
+          {/* AI Analysis Result */}
+          {errorRoute && (
+            <div className="mt-4 bg-red-50 border border-red-200 rounded-xl p-4">
+              <p className="text-red-800 text-sm">{errorRoute}</p>
+            </div>
+          )}
+
+          {result && result.success && (
+            <div className="mt-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-5 space-y-4">
+              {/* Header */}
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-800 mb-1">
+                    {i18n.language === 'zh' ? 'AI 智能分析結果' : 'AI Analysis Result'}
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    {i18n.language === 'zh' ? result.summary_tc : result.summary_eng}
+                  </p>
+                </div>
+              </div>
+
+              {/* Affected Issues */}
+              {result.affectedIssues && result.affectedIssues.length > 0 && (
+                <div className="bg-white/60 rounded-lg p-3">
+                  <h5 className="text-xs font-bold text-gray-500 uppercase mb-2">
+                    {i18n.language === 'zh' ? '受影響問題' : 'Affected Issues'}
+                  </h5>
+                  <ul className="space-y-2">
+                    {result.affectedIssues.map((issue, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${
+                          issue.severity === 'high' ? 'bg-red-500' :
+                          issue.severity === 'medium' ? 'bg-orange-500' : 'bg-yellow-500'
+                        }`}></span>
+                        <span className="text-sm text-gray-700">
+                          {i18n.language === 'zh' ? issue.title_tc : issue.title_eng}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Suggestion */}
+              <div className="bg-white/60 rounded-lg p-3">
+                <h5 className="text-xs font-bold text-gray-500 uppercase mb-2">
+                  {i18n.language === 'zh' ? '建議' : 'Suggestion'}
+                </h5>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {i18n.language === 'zh' ? result.suggestion_tc : result.suggestion_eng}
+                </p>
+              </div>
+
+              {/* Timestamp */}
+              <div className="text-xs text-gray-500 text-right">
+                {i18n.language === 'zh' ? '檢查時間' : 'Checked at'}: {result.checkedAt}
+              </div>
+            </div>
+          )}
 
           {/* MTR Service Status */}
           <div>
