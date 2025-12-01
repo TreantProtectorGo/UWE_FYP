@@ -21,7 +21,6 @@ const HomePage = () => {
   // Map Picker State
   const [showOriginMap, setShowOriginMap] = useState(false);
   const [showDestMap, setShowDestMap] = useState(false);
-  const [showAIResults, setShowAIResults] = useState(false);
   
   // MTR State
   const [mtrData, setMtrData] = useState([]);
@@ -149,40 +148,17 @@ const HomePage = () => {
     if (!origin.trim() || !destination.trim()) {
       return;
     }
-
-    setLoadingRoute(true);
-    setErrorRoute(null);
-    setResult(null);
-
-    try {
-      const data = await aiAPI.checkRoute(origin, destination);
-      setResult(data);
-      setShowAIResults(true);
-    } catch (err) {
-      console.error('AI API Error:', err.message);
-      setErrorRoute(err.message || 'AI analysis failed');
-      setShowAIResults(false);
-    } finally {
-      setLoadingRoute(false);
-    }
   };
 
   const handleClear = () => {
     setOrigin('');
     setDestination('');
-    setResult(null);
-    setErrorRoute(null);
-    setShowAIResults(false);
   };
 
   const handleSwap = () => {
     const temp = origin;
     setOrigin(destination);
     setDestination(temp);
-  };
-
-  const closePopup = () => {
-    setShowAIResults(false);
   };
 
   return (
@@ -331,32 +307,13 @@ const HomePage = () => {
               disabled={loadingRoute}
               className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-black hover:to-gray-900 text-white font-semibold py-3 rounded-xl shadow-lg shadow-gray-400/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
             >
-              {loadingRoute ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                  {t('aiCheck.checking')}
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  {t('aiCheck.findRoute')}
-                </>
-              )}
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              {t('aiCheck.findRoute')}
             </button>
 
           </form>
-
-          {(result || errorRoute) && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="w-full px-4 py-3 mb-6 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition font-medium border border-gray-200"
-            >
-              {t('aiCheck.clear')}
-            </button>
-          )}
 
           {/* MTR Service Status */}
           <div>
@@ -438,207 +395,6 @@ const HomePage = () => {
         onSelectLocation={(location) => setDestination(location)}
         title={t('aiCheck.destination')}
       />
-
-      {/* AI Results Modal */}
-      {showAIResults && (
-        <div 
-          // CHANGE HERE: use 'bg-black/50' instead of 'bg-black bg-opacity-50'
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" 
-          onClick={closePopup}
-        >
-          <div 
-            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-              <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                {i18n.language === 'zh' ? 'AI 路線分析結果' : 'AI Route Analysis Result'}
-              </h2>
-              <button
-                onClick={closePopup}
-                className="p-2 hover:bg-gray-100 rounded-full transition"
-              >
-                <svg className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="px-6 py-6">
-              {/* Route Info */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                  <span className="text-sm text-gray-600">{i18n.language === 'zh' ? '起點' : 'Origin'}:</span>
-                  <span className="font-semibold text-gray-800">{result?.origin}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <svg className="w-5 h-5 text-red-500 fill-current" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                  </svg>
-                  <span className="text-sm text-gray-600">{i18n.language === 'zh' ? '終點' : 'Destination'}:</span>
-                  <span className="font-semibold text-gray-800">{result?.destination}</span>
-                </div>
-              </div>
-
-              {/* Error Message */}
-              {errorRoute && (
-                <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-red-700 text-sm">{t('aiCheck.error')}</p>
-                </div>
-              )}
-
-              {/* AI Analysis Results */}
-              {result && result.ai_analysis && (
-                <div className="space-y-4">
-                  {/* AI Summary with Severity Badge */}
-                  <div className={`rounded-lg p-5 border-2 ${
-                    result.ai_analysis.severity === 'high' 
-                      ? 'bg-red-50 border-red-300'
-                      : result.ai_analysis.severity === 'medium'
-                      ? 'bg-orange-50 border-orange-300'
-                      : 'bg-green-50 border-green-300'
-                  }`}>
-                    <div className="flex items-start gap-3">
-                      <svg className={`w-6 h-6 flex-shrink-0 mt-0.5 ${
-                        result.ai_analysis.severity === 'high' ? 'text-red-600'
-                        : result.ai_analysis.severity === 'medium' ? 'text-orange-600'
-                        : 'text-green-600'
-                      }`} fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                      </svg>
-                      <div className="flex-1">
-                        <p className="font-semibold text-base text-gray-800 mb-1">
-                          {i18n.language === 'zh' ? '路線狀況' : 'Route Status'}
-                        </p>
-                        <p className="text-gray-700">
-                          {i18n.language === 'zh' ? result.ai_analysis.summary_tc : result.ai_analysis.summary_eng}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* AI Suggestions - Public Transport & Private Car */}
-                  <div className="bg-purple-50 border-2 border-purple-300 rounded-lg p-5">
-                    <div className="flex items-center gap-2 mb-4">
-                      <svg className="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                      <span className="font-bold text-base text-purple-800">
-                        {i18n.language === 'zh' ? 'AI 建議路線' : 'AI Suggested Routes'}
-                      </span>
-                    </div>
-                    <div className="space-y-3">
-                      {/* Option 1: Public Transport */}
-                      {result.ai_analysis.public_transport && (
-                        <div className="bg-white rounded-lg p-4 border border-purple-200 shadow-sm">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                              <span className="w-6 h-6 flex items-center justify-center bg-purple-600 text-white text-sm font-bold rounded-full">
-                                1
-                              </span>
-                              <span className="font-semibold text-gray-800">
-                                {i18n.language === 'zh' ? result.ai_analysis.public_transport.method_tc : result.ai_analysis.public_transport.method_eng}
-                              </span>
-                            </div>
-                            <span className="text-sm font-medium text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
-                              {result.ai_analysis.public_transport.time}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-600 pl-8">
-                            {i18n.language === 'zh' ? result.ai_analysis.public_transport.reason_tc : result.ai_analysis.public_transport.reason_eng}
-                          </p>
-                        </div>
-                      )}
-
-                      {/* Option 2: Private Car */}
-                      {result.ai_analysis.private_car && (
-                        <div className="bg-white rounded-lg p-4 border border-purple-200 shadow-sm">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                              <span className="w-6 h-6 flex items-center justify-center bg-purple-600 text-white text-sm font-bold rounded-full">
-                                2
-                              </span>
-                              <span className="font-semibold text-gray-800">
-                                {i18n.language === 'zh' ? result.ai_analysis.private_car.route_tc : result.ai_analysis.private_car.route_eng}
-                              </span>
-                            </div>
-                            <span className="text-sm font-medium text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
-                              {result.ai_analysis.private_car.time}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-600 pl-8">
-                            {i18n.language === 'zh' ? result.ai_analysis.private_car.reason_tc : result.ai_analysis.private_car.reason_eng}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Affected Issues */}
-                  {result.all_issues && result.all_issues.length > 0 && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <p className="text-sm text-blue-800 flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                        </svg>
-                        {i18n.language === 'zh' 
-                          ? `已分析 ${result.all_issues.length} 個相關交通問題`
-                          : `Analyzed ${result.all_issues.length} related traffic issues`
-                        }
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Fallback: Old format support */}
-              {result && !result.ai_analysis && result.issues && (
-                <div className="space-y-4">
-                  {result.issues && result.issues.length > 0 ? (
-                    <div className="space-y-3">
-                      <p className="font-semibold text-gray-700">{t('aiCheck.issuesFound')}:</p>
-                      <div className="space-y-3">
-                        {result.issues.map((issue, index) => (
-                          <div
-                            key={index}
-                            className="bg-gray-50 rounded-lg p-4 border border-gray-200"
-                          >
-                            <div className="font-semibold mb-2 text-gray-800">{issue.location}</div>
-                            <div className="text-gray-600 mb-2">{issue.description}</div>
-                            {issue.suggestion && (
-                              <div className="mt-2 bg-blue-50 border border-blue-200 rounded p-3">
-                                <p className="text-blue-800 text-sm">
-                                  <span className="font-medium">💡</span> {issue.suggestion}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <p className="flex items-center gap-2 text-green-700">
-                        <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {t('aiCheck.noIssues')}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-          </div>
-        </div>
-      )}
     </div>
   );
 };
