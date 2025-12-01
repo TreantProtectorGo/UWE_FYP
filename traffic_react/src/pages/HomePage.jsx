@@ -384,7 +384,77 @@ const HomePage = () => {
             </div>
           )}
 
-          {result && (
+          {result && result.ai_analysis && (
+            <div className="mt-4 space-y-3">
+              {/* AI Summary with Severity Badge */}
+              <div className={`rounded-lg p-4 border-2 ${
+                result.ai_analysis.severity === 'high' 
+                  ? 'bg-red-50 border-red-300'
+                  : result.ai_analysis.severity === 'medium'
+                  ? 'bg-orange-50 border-orange-300'
+                  : 'bg-green-50 border-green-300'
+              }`}>
+                <div className="flex items-start gap-2 mb-2">
+                  <svg className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                    result.ai_analysis.severity === 'high' ? 'text-red-600'
+                    : result.ai_analysis.severity === 'medium' ? 'text-orange-600'
+                    : 'text-green-600'
+                  }`} fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm text-gray-800">
+                      {i18n.language === 'zh' ? result.ai_analysis.summary_tc : result.ai_analysis.summary_eng}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI Suggestions */}
+              {result.ai_analysis.suggestions && result.ai_analysis.suggestions.length > 0 && (
+                <div className="bg-purple-50 border-2 border-purple-300 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    <span className="font-bold text-sm text-purple-800">
+                      {i18n.language === 'zh' ? 'AI 建議' : 'AI Suggestions'}
+                    </span>
+                  </div>
+                  <div className="space-y-3">
+                    {result.ai_analysis.suggestions.map((sug, i) => (
+                      <div key={i} className="bg-white rounded-lg p-3 border border-purple-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-semibold text-gray-800">
+                            {i18n.language === 'zh' ? sug.method_tc : sug.method_eng}
+                          </span>
+                          <span className="text-sm font-medium text-purple-600 bg-purple-100 px-2 py-1 rounded">
+                            {sug.time}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          {i18n.language === 'zh' ? sug.reason_tc : sug.reason_eng}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Affected Issues (Optional - show count) */}
+              {result.ai_analysis.affected_issues && result.ai_analysis.affected_issues.length > 0 && (
+                <div className="text-xs text-gray-500 text-center">
+                  {i18n.language === 'zh' 
+                    ? `已分析 ${result.ai_analysis.affected_issues.length} 個相關交通問題`
+                    : `Analyzed ${result.ai_analysis.affected_issues.length} related traffic issues`
+                  }
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Fallback: Old format support */}
+          {result && !result.ai_analysis && result.issues && (
             <div className="mt-4 bg-gray-50 rounded-lg p-4 border border-gray-200 max-h-96 overflow-y-auto">
               <h3 className="font-bold mb-3 flex items-center gap-2 text-gray-800">
                 <svg className="w-5 h-5 flex-shrink-0 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
