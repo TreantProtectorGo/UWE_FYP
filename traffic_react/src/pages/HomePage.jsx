@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { trafficAPI, aiAPI, mtrAPI } from '../services/api';
+import MapPicker from '../components/MapPicker';
 
 const HomePage = () => {
   const { t, i18n } = useTranslation();
@@ -16,6 +17,11 @@ const HomePage = () => {
   const [loadingRoute, setLoadingRoute] = useState(false);
   const [result, setResult] = useState(null);
   const [errorRoute, setErrorRoute] = useState(null);
+  
+  // Map Picker State
+  const [showOriginMap, setShowOriginMap] = useState(false);
+  const [showDestMap, setShowDestMap] = useState(false);
+  
   // MTR State
   const [mtrData, setMtrData] = useState([]);
   const [loadingMtr, setLoadingMtr] = useState(true);
@@ -270,14 +276,27 @@ const HomePage = () => {
               </div>
               <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-blue-400 transition-all">
                 <label className="block text-xs text-gray-400 font-medium mb-1">{t('aiCheck.origin')}</label>
-                <input
-                  type="text"
-                  value={origin}
-                  onChange={(e) => setOrigin(e.target.value)}
-                  placeholder={t('aiCheck.originPlaceholder')}
-                  className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400"
-                  required
-                />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={origin}
+                    onChange={(e) => setOrigin(e.target.value)}
+                    placeholder={t('aiCheck.originPlaceholder')}
+                    className="flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowOriginMap(true)}
+                    className="p-1 hover:bg-gray-200 rounded transition flex-shrink-0"
+                    title={i18n.language === 'zh' ? '從地圖選擇' : 'Select from map'}
+                  >
+                    <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -302,14 +321,27 @@ const HomePage = () => {
               </div>
               <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-blue-400 transition-all">
                 <label className="block text-xs text-gray-400 font-medium mb-1">{t('aiCheck.destination')}</label>
-                <input
-                  type="text"
-                  value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
-                  placeholder={t('aiCheck.destinationPlaceholder')}
-                  className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400"
-                  required
-                />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
+                    placeholder={t('aiCheck.destinationPlaceholder')}
+                    className="flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowDestMap(true)}
+                    className="p-1 hover:bg-gray-200 rounded transition flex-shrink-0"
+                    title={i18n.language === 'zh' ? '從地圖選擇' : 'Select from map'}
+                  >
+                    <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -461,6 +493,21 @@ const HomePage = () => {
           
         </div>
       </div>
+
+      {/* Map Pickers */}
+      <MapPicker
+        isOpen={showOriginMap}
+        onClose={() => setShowOriginMap(false)}
+        onSelectLocation={(location) => setOrigin(location)}
+        title={t('aiCheck.origin')}
+      />
+      
+      <MapPicker
+        isOpen={showDestMap}
+        onClose={() => setShowDestMap(false)}
+        onSelectLocation={(location) => setDestination(location)}
+        title={t('aiCheck.destination')}
+      />
     </div>
   );
 };
