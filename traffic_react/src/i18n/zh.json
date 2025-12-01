@@ -1,0 +1,70 @@
+{
+  "appName": "香港交通資訊系統",
+  "language": "語言",
+  "nav": {
+    "trafficNews": "交通消息",
+    "aiCheck": "AI路線檢查"
+  },
+  "trafficNews": {
+    "title": "交通消息",
+    "loading": "載入中...",
+    "error": "載入錯誤",
+    "noData": "暫無交通消息",
+    "refresh": "重新整理",
+    "type": "類型",
+    "location": "地點",
+    "description": "詳情",
+    "time": "時間",
+    "types": {
+      "accident": "意外",
+      "roadClosure": "封路",
+      "construction": "道路工程",
+      "congestion": "交通擠塞",
+      "other": "其他"
+    }
+  },
+  "aiCheck": {
+    "title": "AI智能路線檢查",
+    "subtitle": "實時交通",
+    "smartTitle": "智能路線檢查",
+    "findRoute": "搜尋最佳路線",
+    "origin": "起點",
+    "destination": "終點",
+    "originPlaceholder": "請輸入起點地址",
+    "destinationPlaceholder": "請輸入終點地址",
+    "checkRoute": "檢查路線",
+    "checking": "正在檢查...",
+    "result": "檢查結果",
+    "noIssues": "您的路線暫無交通問題",
+    "issuesFound": "發現以下交通狀況",
+    "clear": "清除",
+    "error": "檢查失敗，請稍後再試",
+    "suggestion": "建議",
+    "swapTooltip": "交換起點與終點"
+  },
+  "common": {
+    "submit": "提交",
+    "cancel": "取消",
+    "confirm": "確認",
+    "close": "關閉",
+    "back": "返回"
+  },
+  "mtr": {
+    "status": "港鐵狀態",
+    "loading": "加載中...",
+    "error": "加載錯誤",
+    "goodService": "服務正常"
+  },
+  "specialTraffic": {
+    "title": "特別交通安排",
+    "active": "現行",
+    "history": "歷史",
+    "updated": "更新時間："
+  },
+  "roadClosure": {
+    "title": "封路安排",
+    "active": "現行",
+    "history": "歷史",
+    "updated": "更新時間："
+  }
+}

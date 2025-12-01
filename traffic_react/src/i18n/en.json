@@ -1,0 +1,70 @@
+{
+  "appName": "Hong Kong Traffic Information System",
+  "language": "Language",
+  "nav": {
+    "trafficNews": "Traffic News",
+    "aiCheck": "AI Route Check"
+  },
+  "trafficNews": {
+    "title": "Traffic News",
+    "loading": "Loading...",
+    "error": "Loading Error",
+    "noData": "No traffic news available",
+    "refresh": "Refresh",
+    "type": "Type",
+    "location": "Location",
+    "description": "Description",
+    "time": "Time",
+    "types": {
+      "accident": "Accident",
+      "roadClosure": "Road Closure",
+      "construction": "Construction",
+      "congestion": "Congestion",
+      "other": "Other"
+    }
+  },
+  "aiCheck": {
+    "title": "AI Smart Route Check",
+    "subtitle": "Check real-time traffic",
+    "smartTitle": "Smart Route Check",
+    "findRoute": "Find Best Route",
+    "origin": "Origin",
+    "destination": "Destination",
+    "originPlaceholder": "Enter origin address",
+    "destinationPlaceholder": "Enter destination address",
+    "checkRoute": "Check Route",
+    "checking": "Checking...",
+    "result": "Check Result",
+    "noIssues": "No traffic issues found on your route",
+    "issuesFound": "The following traffic conditions were found",
+    "clear": "Clear",
+    "error": "Check failed, please try again later",
+    "suggestion": "Suggestion",
+    "swapTooltip": "Swap origin and destination"
+  },
+  "common": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "back": "Back"
+  },
+  "mtr": {
+    "status": "MTR Status",
+    "loading": "Loading...",
+    "error": "Loading Error",
+    "goodService": "Good Service"
+  },
+  "specialTraffic": {
+    "title": "Special Traffic Arrangements",
+    "active": "Active",
+    "history": "History",
+    "updated": "Updated: "
+  },
+  "roadClosure": {
+    "title": "Road Closures",
+    "active": "Active",
+    "history": "History",
+    "updated": "Updated: "
+  }
+}
