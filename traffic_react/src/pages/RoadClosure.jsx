@@ -5,14 +5,50 @@ import { roadClosureAPI } from '../services/api';
 const RoadClosure = () => {
   const { t, i18n } = useTranslation();
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [activeTab, setActiveTab] = useState('active'); // 'active' or 'history'
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     fetchData();
   }, [i18n.language, activeTab]);
+
+  useEffect(() => {
+    filterData();
+  }, [startDate, endDate, data]);
+
+  const filterData = () => {
+    if (!startDate && !endDate) {
+      setFilteredData(data);
+      return;
+    }
+
+    const filtered = data.filter(item => {
+      const itemDate = new Date(item.time);
+      const start = startDate ? new Date(startDate + 'T00:00:00') : null;
+      const end = endDate ? new Date(endDate + 'T23:59:59') : null;
+
+      if (start && end) {
+        return itemDate >= start && itemDate <= end;
+      } else if (start) {
+        return itemDate >= start;
+      } else if (end) {
+        return itemDate <= end;
+      }
+      return true;
+    });
+
+    setFilteredData(filtered);
+  };
+
+  const clearDateFilter = () => {
+    setStartDate('');
+    setEndDate('');
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -24,6 +60,7 @@ const RoadClosure = () => {
       // Sort by time desc
       const sorted = result.sort((a, b) => new Date(b.time) - new Date(a.time));
       setData(sorted);
+      setFilteredData(sorted);
     } catch (err) {
       console.error('Error fetching road closures:', err);
       setError(err.message || 'Failed to load data');
@@ -66,6 +103,47 @@ const RoadClosure = () => {
         </button>
       </div>
 
+      {/* Date Filter - Only show in history tab */}
+      {activeTab === 'history' && (
+        <div className="bg-white rounded-xl shadow-md border border-gray-100 p-4 mb-4">
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                {i18n.language === 'zh' ? '開始日期' : 'Start Date'}:
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                {i18n.language === 'zh' ? '結束日期' : 'End Date'}:
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            {(startDate || endDate) && (
+              <button
+                onClick={clearDateFilter}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
+              >
+                {i18n.language === 'zh' ? '清除篩選' : 'Clear Filter'}
+              </button>
+            )}
+            <div className="ml-auto text-sm text-gray-600">
+              {i18n.language === 'zh' ? '共' : 'Total'} {filteredData.length} {i18n.language === 'zh' ? '項' : 'items'}
+            </div>
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -79,10 +157,14 @@ const RoadClosure = () => {
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
           <p className="text-gray-600">{t('trafficNews.noData')}</p>
         </div>
+      ) : filteredData.length === 0 ? (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+          <p className="text-gray-600">{i18n.language === 'zh' ? '沒有符合條件的資料' : 'No data matches the filter'}</p>
+        </div>
       ) : (
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
           <ul className="divide-y divide-gray-200">
-            {data.map((item) => (
+            {filteredData.map((item) => (
               <li
                 key={item.tnId}
                 className="py-4 cursor-pointer hover:bg-gray-50 transition"
@@ -91,9 +173,15 @@ const RoadClosure = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-sm text-gray-500">
-                        {t('roadClosure.updated')}{item.time}
-                      </span>
+                      {activeTab === 'active' ? (
+                        <span className="px-3 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded-full border border-green-200">
+                          {i18n.language === 'zh' ? '生效中' : 'Active'}
+                        </span>
+                      ) : (
+                        <span className="text-sm text-gray-500">
+                          {t('roadClosure.updated')}{item.time}
+                        </span>
+                      )}
                     </div>
                     <p className="text-lg font-semibold text-gray-800">
                       {i18n.language === 'zh' ? item.title_tc : item.title_eng}
