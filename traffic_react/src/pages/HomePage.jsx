@@ -11,6 +11,7 @@ const HomePage = () => {
   const [filteredTrafficData, setFilteredTrafficData] = useState([]);
   const [loadingTraffic, setLoadingTraffic] = useState(true);
   const [errorTraffic, setErrorTraffic] = useState(null);
+  const [activeTab, setActiveTab] = useState('today'); // 'today' or 'all'
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
@@ -122,31 +123,44 @@ const HomePage = () => {
     fetchMtrStatus();
   }, [i18n.language]); // 當語言改變時重新抓取資料
 
-  // Filter traffic data when date changes
+  // Filter traffic data when date changes or tab changes
   useEffect(() => {
     filterTrafficData();
-  }, [startDate, endDate, trafficData]);
+  }, [startDate, endDate, trafficData, activeTab]);
 
   const filterTrafficData = () => {
-    if (!startDate && !endDate) {
-      setFilteredTrafficData(trafficData);
-      return;
+    let filtered = trafficData;
+
+    // Apply tab filter first (today or all)
+    if (activeTab === 'today') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      filtered = trafficData.filter(item => {
+        const itemDate = new Date(item.time);
+        return itemDate >= today && itemDate < tomorrow;
+      });
     }
 
-    const filtered = trafficData.filter(item => {
-      const itemDate = new Date(item.time);
-      const start = startDate ? new Date(startDate + 'T00:00:00') : null;
-      const end = endDate ? new Date(endDate + 'T23:59:59') : null;
+    // Apply date range filter (only in 'all' tab)
+    if (activeTab === 'all' && (startDate || endDate)) {
+      filtered = filtered.filter(item => {
+        const itemDate = new Date(item.time);
+        const start = startDate ? new Date(startDate + 'T00:00:00') : null;
+        const end = endDate ? new Date(endDate + 'T23:59:59') : null;
 
-      if (start && end) {
-        return itemDate >= start && itemDate <= end;
-      } else if (start) {
-        return itemDate >= start;
-      } else if (end) {
-        return itemDate <= end;
-      }
-      return true;
-    });
+        if (start && end) {
+          return itemDate >= start && itemDate <= end;
+        } else if (start) {
+          return itemDate >= start;
+        } else if (end) {
+          return itemDate <= end;
+        }
+        return true;
+      });
+    }
 
     setFilteredTrafficData(filtered);
   };
@@ -220,7 +234,32 @@ const HomePage = () => {
       {/* Traffic News Section - Left 70% */}
       <div className="flex-1">
         
-        {/* Date Filter */}
+        {/* Tab Navigation */}
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => setActiveTab('today')}
+            className={`px-6 py-2 rounded-lg font-medium transition ${
+              activeTab === 'today'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+            }`}
+          >
+            {t('trafficNews.today')}
+          </button>
+          <button
+            onClick={() => setActiveTab('all')}
+            className={`px-6 py-2 rounded-lg font-medium transition ${
+              activeTab === 'all'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+            }`}
+          >
+            {t('trafficNews.all')}
+          </button>
+        </div>
+        
+        {/* Date Filter - Only show in 'all' tab */}
+        {activeTab === 'all' && (
         <div className="bg-white rounded-xl shadow-md border border-gray-100 p-4 mb-4">
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
@@ -258,6 +297,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+        )}
 
         {loadingTraffic ? (
           <div className="flex justify-center items-center h-64">
