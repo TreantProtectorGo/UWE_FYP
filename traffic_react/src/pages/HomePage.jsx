@@ -185,7 +185,7 @@ const HomePage = () => {
     e.preventDefault();
     
     if (!origin.trim() || !destination.trim()) {
-      alert(i18n.language === 'zh' ? '請輸入起點和終點' : 'Please enter origin and destination');
+      alert(t('aiCheck.errorInputRequired'));
       return;
     }
 
@@ -198,7 +198,7 @@ const HomePage = () => {
       setResult(response);
     } catch (err) {
       console.error('AI Route Check Error:', err);
-      setErrorRoute(err.message || (i18n.language === 'zh' ? '檢查失敗，請稍後再試' : 'Check failed, please try again'));
+      setErrorRoute(err.message || t('aiCheck.error'));
     } finally {
       setLoadingRoute(false);
     }
@@ -225,7 +225,7 @@ const HomePage = () => {
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium text-gray-700">
-                {i18n.language === 'zh' ? '開始日期' : 'Start Date'}:
+                {t('filter.startDate')}:
               </label>
               <input
                 type="date"
@@ -236,7 +236,7 @@ const HomePage = () => {
             </div>
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium text-gray-700">
-                {i18n.language === 'zh' ? '結束日期' : 'End Date'}:
+                {t('filter.endDate')}:
               </label>
               <input
                 type="date"
@@ -250,11 +250,11 @@ const HomePage = () => {
                 onClick={clearDateFilter}
                 className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
               >
-                {i18n.language === 'zh' ? '清除篩選' : 'Clear Filter'}
+                {t('filter.clear')}
               </button>
             )}
             <div className="ml-auto text-sm text-gray-600">
-              {i18n.language === 'zh' ? '共' : 'Total'} {filteredTrafficData.length} {i18n.language === 'zh' ? '則消息' : 'messages'}
+              {t('filter.total')} {filteredTrafficData.length} {t('filter.messages')}
             </div>
           </div>
         </div>
@@ -280,7 +280,7 @@ const HomePage = () => {
           </div>
         ) : filteredTrafficData.length === 0 ? (
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-            <p className="text-gray-600">{i18n.language === 'zh' ? '沒有符合條件的交通消息' : 'No traffic news matches the filter'}</p>
+            <p className="text-gray-600">{t('filter.noMatchTraffic')}</p>
           </div>
         ) : (
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
@@ -343,7 +343,7 @@ const HomePage = () => {
                     type="button"
                     onClick={() => setShowOriginMap(true)}
                     className="p-1 hover:bg-gray-200 rounded transition flex-shrink-0"
-                    title={i18n.language === 'zh' ? '從地圖選擇' : 'Select from map'}
+                    title={t('aiCheck.selectFromMap')}
                   >
                     <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -388,7 +388,7 @@ const HomePage = () => {
                     type="button"
                     onClick={() => setShowDestMap(true)}
                     className="p-1 hover:bg-gray-200 rounded transition flex-shrink-0"
-                    title={i18n.language === 'zh' ? '從地圖選擇' : 'Select from map'}
+                    title={t('aiCheck.selectFromMap')}
                   >
                     <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -407,7 +407,7 @@ const HomePage = () => {
               {loadingRoute ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  {i18n.language === 'zh' ? '分析中...' : 'Analyzing...'}
+                  {t('aiCheck.analyzing')}
                 </>
               ) : (
                 <>
@@ -439,7 +439,7 @@ const HomePage = () => {
                 </div>
                 <div className="flex-1">
                   <h4 className="font-bold text-gray-800 mb-1">
-                    {i18n.language === 'zh' ? 'AI 智能分析結果' : 'AI Analysis Result'}
+                    {t('aiCheck.aiResult')}
                   </h4>
                   <p className="text-sm text-gray-600">
                     {i18n.language === 'zh' ? result.summary_tc : result.summary_eng}
@@ -451,7 +451,7 @@ const HomePage = () => {
               {result.affectedIssues && result.affectedIssues.length > 0 && (
                 <div className="bg-white/60 rounded-lg p-3">
                   <h5 className="text-xs font-bold text-gray-500 uppercase mb-2">
-                    {i18n.language === 'zh' ? '受影響問題' : 'Affected Issues'}
+                    {t('aiCheck.affectedIssues')}
                   </h5>
                   <ul className="space-y-2">
                     {result.affectedIssues.map((issue, idx) => (
@@ -472,7 +472,7 @@ const HomePage = () => {
               {/* Suggestion */}
               <div className="bg-white/60 rounded-lg p-3">
                 <h5 className="text-xs font-bold text-gray-500 uppercase mb-2">
-                  {i18n.language === 'zh' ? '建議' : 'Suggestion'}
+                  {t('aiCheck.suggestion')}
                 </h5>
                 <p className="text-sm text-gray-700 leading-relaxed">
                   {i18n.language === 'zh' ? result.suggestion_tc : result.suggestion_eng}
@@ -481,7 +481,7 @@ const HomePage = () => {
 
               {/* Timestamp */}
               <div className="text-xs text-gray-500 text-right">
-                {i18n.language === 'zh' ? '檢查時間' : 'Checked at'}: {result.checkedAt}
+                {t('aiCheck.checkedAt')}: {result.checkedAt}
               </div>
             </div>
           )}

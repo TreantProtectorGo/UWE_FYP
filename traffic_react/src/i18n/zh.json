@@ -34,13 +34,19 @@
     "destinationPlaceholder": "請輸入終點地址",
     "checkRoute": "檢查路線",
     "checking": "正在檢查...",
+    "analyzing": "分析中...",
     "result": "檢查結果",
+    "aiResult": "AI 智能分析結果",
     "noIssues": "您的路線暫無交通問題",
     "issuesFound": "發現以下交通狀況",
+    "affectedIssues": "受影響問題",
     "clear": "清除",
     "error": "檢查失敗，請稍後再試",
+    "errorInputRequired": "請輸入起點和終點",
     "suggestion": "建議",
-    "swapTooltip": "交換起點與終點"
+    "swapTooltip": "交換起點與終點",
+    "selectFromMap": "從地圖選擇",
+    "checkedAt": "檢查時間"
   },
   "common": {
     "submit": "提交",
@@ -59,12 +65,24 @@
     "title": "特別交通安排",
     "active": "現行",
     "history": "歷史",
-    "updated": "更新時間："
+    "updated": "更新時間：",
+    "activeStatus": "生效中"
   },
   "roadClosure": {
     "title": "封路安排",
     "active": "現行",
     "history": "歷史",
-    "updated": "更新時間："
+    "updated": "更新時間：",
+    "activeStatus": "生效中"
+  },
+  "filter": {
+    "startDate": "開始日期",
+    "endDate": "結束日期",
+    "clear": "清除篩選",
+    "total": "共",
+    "items": "項",
+    "messages": "則消息",
+    "noMatch": "沒有符合條件的資料",
+    "noMatchTraffic": "沒有符合條件的交通消息"
   }
 }

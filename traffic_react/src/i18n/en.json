@@ -34,13 +34,19 @@
     "destinationPlaceholder": "Enter destination address",
     "checkRoute": "Check Route",
     "checking": "Checking...",
+    "analyzing": "Analyzing...",
     "result": "Check Result",
+    "aiResult": "AI Analysis Result",
     "noIssues": "No traffic issues found on your route",
     "issuesFound": "The following traffic conditions were found",
+    "affectedIssues": "Affected Issues",
     "clear": "Clear",
     "error": "Check failed, please try again later",
+    "errorInputRequired": "Please enter origin and destination",
     "suggestion": "Suggestion",
-    "swapTooltip": "Swap origin and destination"
+    "swapTooltip": "Swap origin and destination",
+    "selectFromMap": "Select from map",
+    "checkedAt": "Checked at"
   },
   "common": {
     "submit": "Submit",
@@ -59,12 +65,24 @@
     "title": "Special Traffic Arrangements",
     "active": "Active",
     "history": "History",
-    "updated": "Updated: "
+    "updated": "Updated: ",
+    "activeStatus": "Active"
   },
   "roadClosure": {
     "title": "Road Closures",
     "active": "Active",
     "history": "History",
-    "updated": "Updated: "
+    "updated": "Updated: ",
+    "activeStatus": "Active"
+  },
+  "filter": {
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "clear": "Clear Filter",
+    "total": "Total",
+    "items": "items",
+    "messages": "messages",
+    "noMatch": "No data matches the filter",
+    "noMatchTraffic": "No traffic news matches the filter"
   }
 }
